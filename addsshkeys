@@ -38,6 +38,9 @@ from docopt import docopt
 from pathlib import Path
 import pexpect
 
+__version__ = "0.0.1"
+__released__ = "2019-03-23"
+
 # Settings
 # These cannot be overridden in ~/.config/addsshkeys/config
 prog_name = 'addsshkeys'
