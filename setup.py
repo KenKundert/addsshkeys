@@ -7,7 +7,7 @@ with open('README.rst') as file:
 
 setup(
     name = 'addsshkeys',
-    version = '0.1.1',
+    version = '0.0.0',
     author = 'Ken Kundert',
     author_email = 'addsshkeys@nurdletech.com',
     description = 'Summarize net worth',
