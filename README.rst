@@ -21,18 +21,18 @@ You download and install *AddSSHkeys* with::
 Once installed, you will need at least one configuration file. The files should 
 be placed in ~/.config/addsshkeys. The default file is *config*.
 
-Configurations can be found in: {settings_dir}.
-They are Python files.  The default configuration is {config_filename}.
+Configurations can be found in: ~/.config/addsshkeys.
+They are Python files.  The default configuration is *config*.
 
 The following settings may be given in your config files.
 
 
-ssh_add:
+**ssh_add**
 
-    The name of the command that adds keys to your SSH agent. By default, 
-    'ssh-add' is used.
+The name of the command that adds keys to your SSH agent. By default, 'ssh-add' 
+is used.
 
-ssh_keys:
+**ssh_keys**
 
     This setting is required.  It contains a dictionary of dictionaries that 
     contains information about each key.  The primary dictionary contains a name 
@@ -57,15 +57,15 @@ ssh_keys:
         the passphrase itself. In this case, the settings file should only be 
         readable by the user.
 
-config_file_mask:
+**config_file_mask**
 
-    An integer that determines if a warning should be printed about the the
-    config file permissions being too loose.  The permissions are only checked
-    if the file is found to contain a passphrase. Default is 0o077.  Set to
-    0o000 to disable the warning. Set to 0o077 to generate a warning if the
-    configuration directory is readable or writable by the group or others. Set
-    to 0o007 to generated a warning if the directory is readable or writable by
-    others.
+An integer that determines if a warning should be printed about the the
+config file permissions being too loose.  The permissions are only checked
+if the file is found to contain a passphrase. Default is 0o077.  Set to
+0o000 to disable the warning. Set to 0o077 to generate a warning if the
+configuration directory is readable or writable by the group or others. Set
+to 0o007 to generated a warning if the directory is readable or writable by
+others.
 
 Here is an example configuration file::
 
