@@ -34,28 +34,28 @@ is used.
 
 **ssh_keys**
 
-    This setting is required.  It contains a dictionary of dictionaries that 
-    contains information about each key.  The primary dictionary contains a name 
-    and the values for each key. The values are held in a dictionary that may 
-    contain three fields:
+This setting is required.  It contains a dictionary of dictionaries that 
+contains information about each key.  The primary dictionary contains a name and 
+the values for each key. The values are held in a dictionary that may contain 
+three fields:
 
-    paths:
+*paths*
 
-        This is required and contains the paths to one or more SSH private key 
-        files.  It may be a list of strings, or a single string that is split.  
-        If a relative path is given, it is relative to ~/.ssh.
+This is required and contains the paths to one or more SSH private key files.  
+It may be a list of strings, or a single string that is split.  If a relative 
+path is given, it is relative to ~/.ssh.
 
-    account:
-        This gives the name of the Avendesora account that holds passphrase for 
-        the keys. If present, Avendesora will be queried for the passphrase.
+*account*
 
-    passphrase:
+This gives the name of the Avendesora account that holds passphrase for the 
+keys. If present, Avendesora will be queried for the passphrase.
 
-        This is required if *account* is not given, otherwise it is optional.  
-        If *account* is given, it is the name of the passphrase field in 
-        Avendesora, which defaults to 'passcode'. If account is not given, it is 
-        the passphrase itself. In this case, the settings file should only be 
-        readable by the user.
+*passphrase*
+
+This is required if *account* is not given, otherwise it is optional.  If 
+*account* is given, it is the name of the passphrase field in Avendesora, which 
+defaults to 'passcode'. If account is not given, it is the passphrase itself. In 
+this case, the settings file should only be readable by the user.
 
 **config_file_mask**
 
