@@ -10,7 +10,7 @@ setup(
     version = '0.0.0',
     author = 'Ken Kundert',
     author_email = 'addsshkeys@nurdletech.com',
-    description = 'Summarize net worth',
+    description = 'Add keys to SSH Agent',
     long_description = readme,
     url = 'https://github.com/kenkundert/addsshkeys',
     download_url = 'https://github.com/kenkundert/addsshkeys/tarball/master',
