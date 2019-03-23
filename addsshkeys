@@ -38,7 +38,7 @@ from docopt import docopt
 from pathlib import Path
 import pexpect
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __released__ = "2019-03-23"
 
 # Settings
