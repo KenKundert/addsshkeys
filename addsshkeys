@@ -64,7 +64,7 @@ try:
     # initialization
     Inform(verbose=verbose)
     settings_dir = Path(settings_dir)
-    pw = PasswordGenerator()
+    pw = None
 
     # read settings file
     config_filepath = Path(settings_dir, config)
@@ -95,6 +95,8 @@ try:
             continue
         try:
             if account_name:
+                if not pw:
+                    pw = PasswordGenerator()
                 account = pw.get_account(account_name)
                 if passphrase:
                     passphrase = str(account.get_value(passphrase).value)
