@@ -40,8 +40,8 @@ from docopt import docopt
 
 from inform import Error, Inform, codicil, comment, display, error, warn
 
-__version__ = "0.0.2"
-__released__ = "2019-03-23"
+__version__ = "0.0.3"
+__released__ = "2020-02-22"
 
 # Settings
 # These cannot be overridden in ~/.config/addsshkeys/config
