@@ -1,7 +1,7 @@
 AddSSHkeys:  Add Keys to SSH Agent
 ==================================
 
-| Version: 0.0.4
+| Version: 0.1.0
 | Released: 2020-08-31
 |
 
@@ -102,5 +102,5 @@ you can have several bundles of keys that you can load as needed.
 Releases
 --------
 **Latest Development Version**:
-    | Version: 0.0.4
+    | Version: 0.1.0
     | Released: 2020-08-31
