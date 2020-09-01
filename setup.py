@@ -23,6 +23,7 @@ setup(
         "avendesora>=1.12",
         "docopt",
         "inform>=1.14",
+        "nestedtext",
         "pexpect",
     ],
     python_requires=">=3.6",

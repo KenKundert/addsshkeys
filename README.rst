@@ -22,10 +22,10 @@ Once installed, you will need at least one configuration file. The files should
 be placed in ~/.config/addsshkeys. The default file is *config*.
 
 Configurations can be found in: ~/.config/addsshkeys.
-They are Python files.  The default configuration is *config*.
+They are `NestedText <https://nestedtext.readthedocs.io>`_ files.
+The default configuration is *config*.
 
 The following settings may be given in your config files.
-
 
 **ssh_add**
 
@@ -69,24 +69,19 @@ others.
 
 Here is an example configuration file::
 
-    ssh_keys = dict(
-        primary = dict(
-            paths = 'primary-ed25519 primary-rsa',
-            account = 'primary-ssh-key',
-        ),
-        digitalocean = dict(
-            paths = 'digitalocean',
-            account = 'digitalocean-ssh-key',
-        ),
-        github = dict(
-            paths = 'github',
-            passphrase = 'canard apply trousseau forgive',
-        ),
-        backups = dict(
-            paths = 'dumper',
-            account = 'dumper-ssh-key',
-        ),
-    )
+    ssh_keys:
+        primary:
+            paths: primary-ed25519 primary-rsa
+            account: primary-ssh-key
+        digitalocean:
+            paths: digitalocean
+            account: digitalocean-ssh-key
+        github:
+            paths: github
+            passphrase: canard apply trousseau forgive
+        backups:
+            paths: dumper
+            account: dumper-ssh-key
 
 
 Running AddSSHkeys
