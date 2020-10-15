@@ -104,3 +104,9 @@ Releases
 **Latest Development Version**:
     | Version: 0.1.0
     | Released: 2020-08-31
+
+0.2 (2020-10-14)
+    - update to latest version of NestedText
+
+0.1 (2020-08-31)
+    - convert to NestedText for settings file.

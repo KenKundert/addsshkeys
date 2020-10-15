@@ -39,7 +39,7 @@ from docopt import docopt
 from inform import (
     Error, Inform, codicil, comment, display, error, warn, os_error
 )
-import nestedtext
+import nestedtext as nt
 
 __version__ = "0.1.0"
 __released__ = "2020-08-31"
@@ -72,8 +72,7 @@ try:
     # read settings file
     config_filepath = Path(settings_dir, config)
     if config_filepath.exists():
-        contents = config_filepath.read_text()
-        settings = nestedtext.loads(contents, str(config_filepath))
+        settings = nt.load(config_filepath, top='dict')
         locals().update(settings)
     else:
         raise Error("config file not found.", culprit=config_filepath)
