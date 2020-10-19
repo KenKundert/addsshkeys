@@ -80,6 +80,10 @@ try:
             settings = nt.load(config_filepath, top='dict')
         else:
             raise Error("config file not found.", culprit=config_filepath)
+    settings['config_file_mask'] = int(
+        settings.get('config_file_mask', config_file_mask),
+        base = 8
+    )
     locals().update(settings)
 
     if not ssh_keys:
