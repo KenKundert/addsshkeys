@@ -73,9 +73,14 @@ try:
     config_filepath = Path(settings_dir, config)
     if config_filepath.exists():
         settings = nt.load(config_filepath, top='dict')
-        locals().update(settings)
     else:
-        raise Error("config file not found.", culprit=config_filepath)
+        # try again, this time with a .nt suffix
+        config_filepath = config_filepath.with_suffix('.nt')
+        if config_filepath.exists():
+            settings = nt.load(config_filepath, top='dict')
+        else:
+            raise Error("config file not found.", culprit=config_filepath)
+    locals().update(settings)
 
     if not ssh_keys:
         raise Error("no keys found.", culprit=config_filepath)
