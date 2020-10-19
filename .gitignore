@@ -1,4 +1,5 @@
 .bump.cfg
 dist
+build
 addsshkeys.egg-info
 

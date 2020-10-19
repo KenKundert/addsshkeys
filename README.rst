@@ -37,18 +37,18 @@ contains information about each key.  The primary dictionary contains a name and
 the values for each key. The values are held in a dictionary that may contain 
 three fields:
 
-*paths*
+**paths**
 
 This is required and contains the paths to one or more SSH private key files.  
 It may be a list of strings, or a single string that is split.  If a relative 
 path is given, it is relative to ~/.ssh.
 
-*account*
+**account**
 
 This gives the name of the Avendesora account that holds passphrase for the 
 keys. If present, Avendesora will be queried for the passphrase.
 
-*passphrase*
+**passphrase**
 
 This is required if *account* is not given, otherwise it is optional.  If 
 *account* is given, it is the name of the passphrase field in Avendesora, which 
@@ -103,6 +103,10 @@ Releases
 **Latest Development Version**:
     | Version: 0.3.0
     | Released: 2020-10-19
+
+
+0.3 (2020-10-19)
+    - allow config file to end with .nt suffix.
 
 0.2 (2020-10-14)
     - update to latest version of NestedText
