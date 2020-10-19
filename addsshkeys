@@ -41,7 +41,7 @@ from inform import (
 )
 import nestedtext as nt
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 __released__ = "2020-10-19"
 
 # Settings
