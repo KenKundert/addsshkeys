@@ -59,10 +59,10 @@ this case, the settings file should only be readable by the user.
 
 An integer that determines if a warning should be printed about the
 config file permissions being too loose.  The permissions are only checked
-if the file is found to contain a passphrase. Default is 0o077.  Set to
-0o000 to disable the warning. Set to 0o077 to generate a warning if the
+if the file is found to contain a passphrase. Default is 077.  Set to
+000 to disable the warning. Set to 077 to generate a warning if the
 configuration directory is readable or writable by the group or others. Set
-to 0o007 to generated a warning if the directory is readable or writable by
+to 007 to generated a warning if the directory is readable or writable by
 others.
 
 Here is an example configuration file::
@@ -80,6 +80,9 @@ Here is an example configuration file::
         backups:
             paths: dumper
             account: dumper-ssh-key
+
+    # assure config file is only readable by me
+    config_file_mask: 077
 
 
 Running AddSSHkeys
