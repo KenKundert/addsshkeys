@@ -1,8 +1,8 @@
 AddSSHkeys:  Add Keys to SSH Agent
 ==================================
 
-| Version: 0.2.0
-| Released: 2020-10-14
+| Version: 0.3.0
+| Released: 2020-10-19
 |
 
 *AddSSHkeys* adds all of your keys to SSH Agent in one operation. It can work 
@@ -101,8 +101,8 @@ can load as needed.
 Releases
 --------
 **Latest Development Version**:
-    | Version: 0.2.0
-    | Released: 2020-10-14
+    | Version: 0.3.0
+    | Released: 2020-10-19
 
 0.2 (2020-10-14)
     - update to latest version of NestedText

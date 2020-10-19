@@ -41,8 +41,8 @@ from inform import (
 )
 import nestedtext as nt
 
-__version__ = "0.2.0"
-__released__ = "2020-10-14"
+__version__ = "0.3.0"
+__released__ = "2020-10-19"
 
 # Settings
 # These cannot be overridden in ~/.config/addsshkeys/config
