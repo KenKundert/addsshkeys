@@ -18,12 +18,10 @@ You download and install *AddSSHkeys* with::
 
     pip3 install --user addsshkeys
 
-Once installed, you will need at least one configuration file. The files should 
-be placed in ~/.config/addsshkeys. The default file is *config*.
-
-Configurations can be found in: ~/.config/addsshkeys.
+Once installed, you will need at least one configuration file.
+Configurations are placed in: ~/.config/addsshkeys.
 They are `NestedText <https://nestedtext.readthedocs.io>`_ files.
-The default configuration is *config*.
+The default configuration is *config*; the default file is *config.nt*.
 
 The following settings may be given in your config files.
 
@@ -59,7 +57,7 @@ this case, the settings file should only be readable by the user.
 
 **config_file_mask**
 
-An integer that determines if a warning should be printed about the the
+An integer that determines if a warning should be printed about the
 config file permissions being too loose.  The permissions are only checked
 if the file is found to contain a passphrase. Default is 0o077.  Set to
 0o000 to disable the warning. Set to 0o077 to generate a warning if the
@@ -95,8 +93,9 @@ And you can run it with a particular configuration using::
 
     addsshkeys <config>
 
-where ``<config>`` is the name of the configuration you wish to use. In this way 
-you can have several bundles of keys that you can load as needed.
+where ``<config>`` is the name of the configuration you wish to use (no need to 
+give the .nt suffix).  In this way you can have several bundles of keys that you 
+can load as needed.
 
 
 Releases
