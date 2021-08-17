@@ -8,18 +8,18 @@ with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
 
 setup(
-    name="addsshkeys",
-    version="0.4.0",
-    author="Ken Kundert",
-    author_email="addsshkeys@nurdletech.com",
-    description="Add keys to SSH Agent",
-    long_description=readme,
-    long_description_content_type = 'text/x-rst',
-    url="https://github.com/kenkundert/addsshkeys",
-    download_url="https://github.com/kenkundert/addsshkeys/tarball/master",
-    license="GPLv3+",
-    scripts="addsshkeys".split(),
-    install_requires=[
+    name = "addsshkeys",
+    version = "0.4.0",
+    author = "Ken Kundert",
+    author_email = "addsshkeys@nurdletech.com",
+    description = "Add keys to SSH Agent",
+    long_description = readme,
+    long_description_content_type  =  'text/x-rst',
+    url = "https://github.com/kenkundert/addsshkeys",
+    download_url = "https://github.com/kenkundert/addsshkeys/tarball/master",
+    license = "GPLv3+",
+    scripts = "addsshkeys".split(),
+    install_requires = [
         "appdirs",
         "avendesora>=1.12",
         "docopt",
@@ -27,9 +27,10 @@ setup(
         "nestedtext>=1.1",
         "pexpect",
     ],
-    python_requires=">=3.6",
-    keywords="avendesora ssh".split(),
-    classifiers=[
+    python_requires = ">=3.6",
+    zip_safe = True,
+    keywords = "avendesora ssh".split(),
+    classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
         "Intended Audience :: End Users/Desktop",
