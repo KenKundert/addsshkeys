@@ -14,7 +14,7 @@ Please report all bugs and suggestions to addsshkeys@nurdletech.com
 Getting Started
 ---------------
 
-You download and install *AddSSHkeys* with::
+Download and install *AddSSHkeys* with::
 
     pip3 install --user addsshkeys
 
