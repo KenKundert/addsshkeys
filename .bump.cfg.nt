@@ -1,0 +1,14 @@
+major: 0
+minor: 4
+patch: 0
+revision: 0
+type: release
+files:
+    setup.py:
+        version: version
+    addsshkeys:
+        version: __version__
+        date: __released__
+    README.rst:
+        version: Version
+        date: Released
