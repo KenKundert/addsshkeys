@@ -1,4 +1,4 @@
-AddSSHkeys:  Add Keys to SSH Agent
+AddSSHkeys — Add Keys to SSH Agent
 ==================================
 
 | Version: 0.4.0
