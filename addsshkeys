@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# DESCRIPTION {{{1
 """
 Add keys to SSH agent
 
@@ -6,32 +7,23 @@ Usage:
     addsshkeys [options] [<config>]
 
 Options:
-    -v, --verbose    list the keys as they are being added to ssh agent
-    -l, --list       list the keys without adding them to ssh agent
+    -v, --verbose          list the keys as they are being added to ssh agent
+    -l, --list             list the keys without adding them to ssh agent
+    -w, --write-auth-sock  write $SSH_AUTH_SOCK to ~/.ssh/auth-sock
 
 Configurations can be found in: {settings_dir}.
-They are Python files.  The default configuration is {config_filename}.
-
-Currently there is only one setting available: ssh_keys.  It contains
-a dictionary of dictionaries that contains information about each key.  The
-primary dictionary contains a name and the values for each key. The values are
-held in a dictionary that may contain three fields: paths, account, and
-passphrase.  The first, paths, is required and contains the paths to one or more
-SSH private key files.  It may be a list of strings, or a single string that is
-split.  If a relative path is given, it is relative to ~/.ssh.  The second,
-account, gives the name of the avendesora account that holds passphrase for the
-keys. If present, Avendesora will be queried for the passphrase. The third,
-passphrase is required if account is not given, otherwise it is optional.  If
-account is given, it is the name of the passphrase field in Avendesora, which
-defaults to 'passcode'. If account is not given, it is the passphrase itself. In
-this case, the settings file should only be readable by the user.
+The default configuration is {config_filename}.
 
 A description of how to configure and use this program can be found at
 `<https://avendesora.readthedocs.io/en/latest/api.html#example-add-ssh-keys>_.
+
+Use of --write-auth-sock is helpful when you have cron and anacron jobs that run 
+while you are logged in that need access to SSH.
 """
 
-from pathlib import Path
 
+# IMPORTS {{{1
+from pathlib import Path
 import pexpect
 from appdirs import user_config_dir
 from avendesora import PasswordError, PasswordGenerator
@@ -40,7 +32,10 @@ from inform import (
     Error, Inform, codicil, comment, display, error, warn, os_error
 )
 import nestedtext as nt
+import os
 
+
+# GLOBALS {{{1
 __version__ = "0.4.0"
 __released__ = "2020-10-19"
 
@@ -55,14 +50,18 @@ ssh_add = "ssh-add"
 ssh_keys = {}
 config_file_mask = 0o077
 
-# read command line
+
+# READ COMMAND LINE {{{1
 cmdline = docopt(__doc__.format(**locals()))
 verbose = cmdline["--verbose"]
 list_keys = cmdline["--list"]
 config = cmdline["<config>"]
+write_auth_sock = cmdline["--write-auth-sock"]
 if not config:
     config = config_filename
 
+
+# READ CONFIGURATION FILE {{{1
 try:
     # initialization
     Inform(verbose=verbose)
@@ -89,7 +88,10 @@ try:
     if not ssh_keys:
         raise Error("no keys found.", culprit=config_filepath)
 
-    # load keys
+
+    # LOAD KEYS {{{1
+    auth_sock = os.environ.get('SSH_AUTH_SOCK')
+
     for key, values in ssh_keys.items():
         try:
             paths = values["paths"].split()
@@ -104,8 +106,9 @@ try:
             for path in paths:
                 display(f"    {path}")
             continue
-        try:
-            if account_name:
+
+        if account_name:
+            try:
                 if not pw:
                     pw = PasswordGenerator()
                 account = pw.get_account(account_name)
@@ -113,41 +116,54 @@ try:
                     passphrase = str(account.get_value(passphrase).value)
                 else:
                     passphrase = str(account.get_passcode().value)
-            elif not passphrase:
-                raise Error("missing passphrase.", culprit=key)
-            else:
-                # config file contains the passphrase, check its permissions
-                permissions = config_filepath.stat().st_mode & 0o777
-                violation = permissions & config_file_mask
-                if violation:
-                    recommended = permissions & ~config_file_mask
-                    warn("file permissions are too loose.", culprit=config_filepath)
-                    codicil(
-                        "Recommend running: chmod {:o} {}".format(
-                            recommended, config_filepath
-                        )
+            except PasswordError as e:
+                e.report(culprit=key)
+        elif not passphrase:
+            raise Error("missing passphrase.", culprit=key)
+        else:
+            # config file contains the passphrase, check its permissions
+            permissions = config_filepath.stat().st_mode & 0o777
+            violation = permissions & config_file_mask
+            if violation:
+                recommended = permissions & ~config_file_mask
+                warn("file permissions are too loose.", culprit=config_filepath)
+                codicil(
+                    "Recommend running: chmod {:o} {}".format(
+                        recommended, config_filepath
                     )
+                )
 
-            for path in paths:
-                comment(f"{key:>15}: adding {path}")
-                path = Path(path).expanduser()
-                path = Path("~/.ssh", path).expanduser()
-                try:
-                    sshadd = pexpect.spawn(ssh_add, [str(path)])
-                    sshadd.expect("Enter passphrase for %s: " % (path), timeout=4)
-                    sshadd.sendline(passphrase)
-                    sshadd.expect(pexpect.EOF)
-                    sshadd.close()
-                    response = sshadd.before.decode("utf-8")
-                    if "identity added" in response.lower():
-                        continue
-                except (pexpect.EOF, pexpect.TIMEOUT):
-                    pass
-                error("failed.", culprit=key)
-                codicil("response:", sshadd.before.decode("utf8"), culprit=ssh_add)
-                codicil("exit status:", sshadd.exitstatus, culprit=ssh_add)
-        except PasswordError as e:
-            e.report(culprit=key)
+        if not auth_sock:
+            raise Error(
+                'cannot access ssh-agent ($SSH_AUTH_SOCK not set or empty).'
+            )
+
+        for path in paths:
+            comment(f"{key:>15}: adding {path}")
+            path = Path(path).expanduser()
+            path = Path("~/.ssh", path).expanduser()
+            try:
+                sshadd = pexpect.spawn(ssh_add, [str(path)])
+                sshadd.expect("Enter passphrase for %s: " % (path), timeout=4)
+                sshadd.sendline(passphrase)
+                sshadd.expect(pexpect.EOF)
+                sshadd.close()
+                response = sshadd.before.decode("utf-8")
+                if "identity added" in response.lower():
+                    continue
+            except (pexpect.EOF, pexpect.TIMEOUT):
+                pass
+            error("failed.", culprit=key)
+            codicil("response:", sshadd.before.decode("utf8"), culprit=ssh_add)
+            codicil("exit status:", sshadd.exitstatus, culprit=ssh_add)
+
+    if write_auth_sock:
+        if not auth_sock:
+            raise Error(
+                'cannot access ssh-agent ($SSH_AUTH_SOCK not set or empty).'
+            )
+        auth_sock_path = Path('~/.ssh/auth-sock').expanduser()
+        auth_sock_path.write_text(auth_sock)
 
 except (Error, PasswordError) as e:
     e.report()
