@@ -9,16 +9,12 @@ Usage:
 Options:
     -v, --verbose          list the keys as they are being added to ssh agent
     -l, --list             list the keys without adding them to ssh agent
-    -w, --write-auth-sock  write $SSH_AUTH_SOCK to ~/.ssh/auth-sock
 
 Configurations can be found in: {settings_dir}.
 The default configuration is {config_filename}.
 
 A description of how to configure and use this program can be found at
 `<https://avendesora.readthedocs.io/en/latest/api.html#example-add-ssh-keys>_.
-
-Use of --write-auth-sock is helpful when you have cron and anacron jobs that run 
-while you are logged in that need access to SSH.
 """
 
 
@@ -29,8 +25,9 @@ from appdirs import user_config_dir
 from avendesora import PasswordError, PasswordGenerator
 from docopt import docopt
 from inform import (
-    Error, Inform, codicil, comment, display, error, warn, os_error
+    Error, Inform, codicil, comment, display, error, full_stop, os_error, warn
 )
+from voluptuous import Schema, Invalid, MultipleInvalid
 import nestedtext as nt
 import os
 
@@ -49,14 +46,55 @@ settings_dir = user_config_dir(prog_name)
 ssh_add = "ssh-add"
 ssh_keys = {}
 config_file_mask = 0o077
+auth_sock_path = None
 
+# UTILITIES {{{1
+def to_list(arg):
+    if isinstance(arg, str):
+        return arg.replace(',', ' ').split()
+    if isinstance(arg, dict):
+        raise Invalid('expected list')
+    return arg
+
+def to_path(path):
+    if isinstance(path, str):
+        return Path(path).expanduser()
+    raise Invalid('expected path')
+
+def to_octal(arg):
+    if isinstance(arg, str):
+        return int(arg, base=8)
+    raise Invalid('expected octal integer')
+
+def to_gpg_ids(arg):
+    return [to_gpg_id(i) for i in to_list(arg)]
+
+def normalize_key(key, parent_keys):
+    return '_'.join(key.lower().split())
+
+def get_auth_sock():
+    auth_sock = os.environ.get('SSH_AUTH_SOCK')
+    if not auth_sock:
+        raise Error(
+            'cannot access ssh-agent ($SSH_AUTH_SOCK not set or empty).'
+        )
+    return auth_sock
+
+
+# CONFIGURATION SCHEMA {{{1
+config_validator = Schema(dict(
+    ssh_keys = {
+        str: dict(paths=to_list, account=str, passphrase=str)
+    },
+    config_file_mask = to_octal,
+    auth_sock_path = to_path,
+))
 
 # READ COMMAND LINE {{{1
 cmdline = docopt(__doc__.format(**locals()))
 verbose = cmdline["--verbose"]
 list_keys = cmdline["--list"]
 config = cmdline["<config>"]
-write_auth_sock = cmdline["--write-auth-sock"]
 if not config:
     config = config_filename
 
@@ -70,19 +108,18 @@ try:
 
     # read settings file
     config_filepath = Path(settings_dir, config)
-    if config_filepath.exists():
-        settings = nt.load(config_filepath, top='dict')
-    else:
-        # try again, this time with a .nt suffix
+    if not config_filepath.exists():
         config_filepath = config_filepath.with_suffix('.nt')
-        if config_filepath.exists():
-            settings = nt.load(config_filepath, top='dict')
-        else:
-            raise Error("config file not found.", culprit=config_filepath)
-    settings['config_file_mask'] = int(
-        settings.get('config_file_mask', config_file_mask),
-        base = 8
+    if not config_filepath.exists():
+        raise Error("config file not found.", culprit=config_filepath)
+
+    settings = nt.load(
+        config_filepath,
+        top = 'dict',
+        keymap = (keymap:={}),
+        normalize_key = normalize_key
     )
+    settings = config_validator(settings)
     locals().update(settings)
 
     if not ssh_keys:
@@ -90,9 +127,8 @@ try:
 
 
     # LOAD KEYS {{{1
-    auth_sock = os.environ.get('SSH_AUTH_SOCK')
-
     for key, values in ssh_keys.items():
+        comment(f"{key}:")
         try:
             paths = values["paths"].split()
         except AttributeError:
@@ -108,16 +144,13 @@ try:
             continue
 
         if account_name:
-            try:
-                if not pw:
-                    pw = PasswordGenerator()
-                account = pw.get_account(account_name)
-                if passphrase:
-                    passphrase = str(account.get_value(passphrase).value)
-                else:
-                    passphrase = str(account.get_passcode().value)
-            except PasswordError as e:
-                e.report(culprit=key)
+            if not pw:
+                pw = PasswordGenerator()
+            account = pw.get_account(account_name)
+            if passphrase:
+                passphrase = str(account.get_value(passphrase).value)
+            else:
+                passphrase = str(account.get_passcode().value)
         elif not passphrase:
             raise Error("missing passphrase.", culprit=key)
         else:
@@ -133,13 +166,11 @@ try:
                     )
                 )
 
-        if not auth_sock:
-            raise Error(
-                'cannot access ssh-agent ($SSH_AUTH_SOCK not set or empty).'
-            )
+        # issue error if ssh-agent is not available
+        get_auth_sock()
 
         for path in paths:
-            comment(f"{key:>15}: adding {path}")
+            comment(f"    adding {path}")
             path = Path(path).expanduser()
             path = Path("~/.ssh", path).expanduser()
             try:
@@ -157,16 +188,27 @@ try:
             codicil("response:", sshadd.before.decode("utf8"), culprit=ssh_add)
             codicil("exit status:", sshadd.exitstatus, culprit=ssh_add)
 
-    if write_auth_sock:
-        if not auth_sock:
-            raise Error(
-                'cannot access ssh-agent ($SSH_AUTH_SOCK not set or empty).'
-            )
-        auth_sock_path = Path('~/.ssh/auth-sock').expanduser()
-        auth_sock_path.write_text(auth_sock)
+    if auth_sock_path:
+        comment(f"writing $SSH_AUTH_SOCK to {auth_sock_path!s}")
+        auth_sock_path.write_text(get_auth_sock())
 
-except (Error, PasswordError) as e:
+# HANDLE EXCEPTIONS {{{1
+except (Error, PasswordError, nt.NestedTextError) as e:
     e.report()
+except MultipleInvalid as exception:  # report schema violations
+    for e in exception.errors:
+        msg, flag = voluptuous_error_msg_mappings.get(
+            e.msg, (e.msg, 'value')
+        )
+        loc = keymap.get(tuple(e.path))
+        codicil = loc.as_line(flag) if loc else None
+        keys = nt.join_keys(e.path, keymap=keymap)
+        error(
+            full_stop(msg),
+            culprit = (filename, keys),
+            codicil = codicil
+        )
+    raise Error("terminated due to previously reported errors.")
 except OSError as e:
     error(os_error(e))
 except KeyboardInterrupt:
