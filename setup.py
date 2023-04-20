@@ -9,7 +9,7 @@ with open("README.rst", encoding="utf-8") as f:
 
 setup(
     name = "addsshkeys",
-    version = "0.4.1",
+    version = "0.4.2",
     author = "Ken Kundert",
     author_email = "addsshkeys@nurdletech.com",
     description = "Add keys to SSH Agent",
