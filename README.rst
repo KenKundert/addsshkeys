@@ -10,7 +10,7 @@ AddSSHkeys — Add Keys to SSH Agent
 .. image:: https://img.shields.io/pypi/pyversions/addsshkeys.svg
     :target: https://pypi.python.org/pypi/addsshkeys
 
-| Version: 0.4.2
+| Version: 0.5
 | Released: 2023-04-20
 |
 
@@ -130,7 +130,7 @@ In this way you can have several bundles of keys that you can load as needed.
 Releases
 --------
 **Latest Development Version**:
-    | Version: 0.4.2
+    | Version: 0.5
     | Released: 2023-04-20
 
 0.5 (2023-04-20)
