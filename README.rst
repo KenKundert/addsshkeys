@@ -1,11 +1,21 @@
 AddSSHkeys — Add Keys to SSH Agent
 ==================================
 
+.. image:: https://pepy.tech/badge/addsshkeys/month
+    :target: https://pepy.tech/project/addsshkeys
+
+.. image:: https://img.shields.io/pypi/v/addsshkeys.svg
+    :target: https://pypi.python.org/pypi/addsshkeys
+
+.. image:: https://img.shields.io/pypi/pyversions/addsshkeys.svg
+    :target: https://pypi.python.org/pypi/addsshkeys
+
 | Version: 0.4.1
 | Released: 2023-04-20
 |
 
 *AddSSHkeys* adds all of your keys to SSH Agent in one operation.
+It is helpful if you routinely add more than one key to your agent.
 It can work with `Avendesora <https://avendesora.readthedocs.io>`_ to keep your 
 passphrases secure.
 
@@ -16,11 +26,11 @@ Getting Started
 
 Download and install *AddSSHkeys* with::
 
-    pip3 install --user addsshkeys
+    pip install addsshkeys
 
 Once installed, you will need at least one configuration file.
 Configurations are placed in: ~/.config/addsshkeys.
-They are `NestedText <https://nestedtext.readthedocs.io>`_ files.
+They are `NestedText <https://nestedtext.org>`_ files.
 The default configuration is *config*; the default file is *config.nt*.
 
 The following settings may be given in your config files.
@@ -96,6 +106,9 @@ Here is an example configuration file::
     # assure config file is only readable by me
     config_file_mask: 077
 
+    # used to provide path to SSH authorization socket to scripts run by cron
+    auth_sock_path: ~/.ssh/auth-sock
+
 Underscores can be replaced by spaces in all keys.
 
 Running AddSSHkeys
@@ -120,6 +133,7 @@ Releases
     | Version: 0.4.1
     | Released: 2023-04-20
 
+0.5 (2023-04-20)
     - added *auth_sock_path*.
 
 0.4 (2020-10-19)

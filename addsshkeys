@@ -53,18 +53,19 @@ def to_list(arg):
     if isinstance(arg, str):
         return arg.replace(',', ' ').split()
     if isinstance(arg, dict):
-        raise Invalid('expected list')
+        raise Invalid('expected a list')
     return arg
 
 def to_path(path):
     if isinstance(path, str):
         return Path(path).expanduser()
-    raise Invalid('expected path')
+    raise Invalid('expected a path')
 
 def to_octal(arg):
-    if isinstance(arg, str):
+    try:
         return int(arg, base=8)
-    raise Invalid('expected octal integer')
+    except (ValueError, TypeError):
+        raise Invalid('expected an octal integer')
 
 def to_gpg_ids(arg):
     return [to_gpg_id(i) for i in to_list(arg)]
@@ -196,6 +197,9 @@ try:
 except (Error, PasswordError, nt.NestedTextError) as e:
     e.report()
 except MultipleInvalid as exception:  # report schema violations
+    voluptuous_error_msg_mappings = {
+        "extra keys not allowed": ("unknown key", "key"),
+    }
     for e in exception.errors:
         msg, flag = voluptuous_error_msg_mappings.get(
             e.msg, (e.msg, 'value')
@@ -205,10 +209,9 @@ except MultipleInvalid as exception:  # report schema violations
         keys = nt.join_keys(e.path, keymap=keymap)
         error(
             full_stop(msg),
-            culprit = (filename, keys),
+            culprit = (config_filepath, keys),
             codicil = codicil
         )
-    raise Error("terminated due to previously reported errors.")
 except OSError as e:
     error(os_error(e))
 except KeyboardInterrupt:
