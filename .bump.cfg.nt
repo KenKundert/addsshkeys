@@ -1,6 +1,6 @@
 major: 0
 minor: 4
-patch: 0
+patch: 1
 revision: 0
 type: release
 files:
@@ -12,3 +12,4 @@ files:
     README.rst:
         version: Version
         date: Released
+style: python

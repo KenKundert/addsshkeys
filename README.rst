@@ -1,8 +1,8 @@
 AddSSHkeys — Add Keys to SSH Agent
 ==================================
 
-| Version: 0.4.0
-| Released: 2020-10-19
+| Version: 0.4.1
+| Released: 2023-04-20
 |
 
 *AddSSHkeys* adds all of your keys to SSH Agent in one operation.
@@ -117,8 +117,8 @@ In this way you can have several bundles of keys that you can load as needed.
 Releases
 --------
 **Latest Development Version**:
-    | Version: 0.4.0
-    | Released: 2020-10-19
+    | Version: 0.4.1
+    | Released: 2023-04-20
 
     - added *auth_sock_path*.
 
