@@ -26,6 +26,7 @@ setup(
         "inform>=1.14",
         "nestedtext>=1.1",
         "pexpect",
+        "voluptuous",
     ],
     python_requires = ">=3.8",
     zip_safe = True,
